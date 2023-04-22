@@ -1,2 +1,2 @@
 ## OptML mini project
-Federated learning and it's optimization algorithms
+Federated learning with non-iid distributed data and it's optimization algorithms.
