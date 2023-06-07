@@ -1,20 +1,15 @@
 from lib.data_helper import DeviceDataLoader
 from torch.utils.data import DataLoader
+from lib.train_helper import *
 
 class Client:
-    def __init__(self, client_id, dataset):
+    def __init__(self, client_id, dataset, net):
         self.client_id = client_id
         self.dataset = dataset
+        self.net = net
     
-    def get_dataset_size(self):
-        return len(self.dataset)
-    
-    def get_client_id(self):
-        return self.client_id
-    
-    def train(self, net, parameters_dict, epochs_per_client, learning_rate, batch_size, device, optim):
+    def train(self, device, state_dict, epochs, batch_size, opt, lr, **kwargs):
         dataloader = DeviceDataLoader(DataLoader(self.dataset, batch_size, shuffle=True), device)
-        net.apply_parameters(parameters_dict)
-        train_history = net.fit(dataloader, epochs_per_client, learning_rate, opt=optim)
-        print('{}: Loss = {}, Accuracy = {}'.format(self.client_id, round(train_history[-1][0], 4), round(train_history[-1][1], 4)))
-        return net.get_parameters()
+        self.net.load_state_dict(state_dict)
+        train_history = fit(self.net, dataloader, epochs, opt, lr, **kwargs)
+        print(f'{self.client_id}: Loss = {train_history[-1][0]:.4f}, Accuracy = {train_history[-1][1]:.4f}')
