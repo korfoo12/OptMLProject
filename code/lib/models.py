@@ -21,14 +21,20 @@ class FederatedNet(torch.nn.Module):
             self.net.load_state_dict(net_state_dict)
         
     def merge_parameters(self, params):
-        state_dict = {}
-        for k,_ in params[0].items():
-            state_dict[k] = 0
+        merged_state_dict = {}
+        for k,_ in params[0][1].items():
+            if k.endswith(".weight") or k.endswith(".bias"):
+                merged_state_dict[k] = 0
+            else:
+                # elements other than weights and biases in the state dict
+                merged_state_dict[k] = v
             
-        for w, sd in params:
-            for k, v in sd.items():
-                state_dict[k] += w * v
-        self.net.load_state_dict(state_dict)
+        for (w, state_dict) in params:
+            for k, v in state_dict.items():
+                if k.endswith(".weight") or k.endswith(".bias"):
+                    merged_state_dict[k] += w * v
+                    
+        self.net.load_state_dict(merged_state_dict)
         
     def get_parameters(self):
         has_customized_func = hasattr(self.net, 'get_parameters') and callable(getattr(self.net, 'get_parameters'))

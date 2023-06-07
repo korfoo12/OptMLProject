@@ -1,9 +1,25 @@
 import torch
-from torch.utils.data import DataLoader, IterableDataset
+from torch.utils.data import DataLoader, Dataset, IterableDataset
 from torch.distributions.dirichlet import Dirichlet
 from itertools import groupby
 import random
 
+class ListDataset(Dataset):
+    def __init__(self,l):
+        self.l = l.copy()
+        
+    def __len__(self):
+        return len(self.l)
+    
+    def __getitem__(self,i):
+        return self.l[i]
+    
+    def __str__(self):
+        return self.l.__str__()
+    
+    def __repr__(self):
+        return self.l.__repr__()
+    
 class DeviceDataLoader(DataLoader):
         def __init__(self, dl, device):
             self.dl = dl
@@ -16,7 +32,7 @@ class DeviceDataLoader(DataLoader):
         def __len__(self):
             return len(self.dl)
 
-def partition_by_class(dataset: IterableDataset):
+def partition_by_class(dataset: Dataset):
     key = lambda x: x[1]
     return {k:list(vs) for k,vs in groupby(sorted(dataset,key=key), key)}
 
@@ -33,7 +49,7 @@ def split(partition, nb_nodes: int, alpha: float = 1.):
         
         for i,(start,stop) in enumerate(zip(indices[:-1],indices[1:])):
             nodes[i] += vs[start:stop]
-    return nodes
+    return [ListDataset(node) for node in nodes]
 
 def get_device():
     return torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
