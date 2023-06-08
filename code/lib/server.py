@@ -21,3 +21,8 @@ class Server:
                     merged_state_dict[k] += w * param
 
         self.net.load_state_dict(merged_state_dict)
+
+    def reset_weights(self):
+        for layer in self.net.children():
+            if hasattr(layer, 'reset_parameters'):
+                layer.reset_parameters()
