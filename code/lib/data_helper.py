@@ -1,5 +1,6 @@
 import torch
-from torch.utils.data import DataLoader, Dataset, IterableDataset
+import torch.nn as nn
+from torch.utils.data import DataLoader, Dataset
 from torch.distributions.dirichlet import Dirichlet
 from itertools import groupby
 import random
@@ -36,16 +37,16 @@ def partition_by_class(dataset: Dataset):
     key = lambda x: x[1]
     return {k:list(vs) for k,vs in groupby(sorted(dataset,key=key), key)}
 
-def split(partition, nb_nodes: int, alpha: float = 1.):
-    splitter = Dirichlet(torch.ones(nb_nodes)*alpha)
-    nodes = [list() for i in range(nb_nodes)]
+def split(partition, N: int, alpha: float = 1.):
+    splitter = Dirichlet(torch.ones(N)*alpha)
+    nodes = [list() for i in range(N)]
     
     # iterate class and add a random nb of samples to each node
-    for k,vs in partition.items():
+    for _,vs in partition.items():
         random.shuffle(vs)
         
-        nbs = splitter.sample() * len(vs)
-        indices = torch.cat((torch.zeros(1),nbs.cumsum(0).round()),0).long()
+        len_per_client = splitter.sample() * len(vs)
+        indices = torch.cat((torch.zeros(1),len_per_client.cumsum(0).round()),0).long()
         
         for i,(start,stop) in enumerate(zip(indices[:-1],indices[1:])):
             nodes[i] += vs[start:stop]
@@ -58,3 +59,4 @@ def to_device(data, device):
     if isinstance(data, (list, tuple)):
         return [to_device(x, device) for x in data]
     return data.to(device, non_blocking=True)
+
