@@ -8,9 +8,11 @@ class VGGWrapper(nn.Module):
         features = list(base_net.features.children()).copy()
         
         # insert batch norm layers
-        for i in range(len(base_net.features))[::-1]:
-            if i % 5 == 0 or i % 5 == 2:
-                features.insert(i+1,nn.BatchNorm2d(features[i].out_channels))
+        inserted = 0
+        for i,f in enumerate(base_net.features.children()):
+            if "Conv2d" in f.__class__.__name__:
+                features.insert(i+1+inserted,nn.BatchNorm2d(f.out_channels))
+                inserted +=1
                 
         self.features = nn.Sequential(*features)
         
