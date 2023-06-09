@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-class vggWrapper(nn.Module):
+class VGGWrapper(nn.Module):
     
     def __init__(self,base_net,out_dim):
         super().__init__()
