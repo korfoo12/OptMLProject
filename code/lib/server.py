@@ -1,5 +1,5 @@
 import torch.nn as nn
-import torch
+from lib.train_helper import init_layer
 
 class Server:    
     def __init__(self, net: nn.Module):
@@ -10,19 +10,16 @@ class Server:
         merged_state_dict = self.net.state_dict()
 
         for k,_ in merged_state_dict.items():
-            if k.endswith(".weight") or k.endswith(".bias"):
-                merged_state_dict[k] = 0
+            merged_state_dict[k] = 0
 
         len_dataset = sum([len(c.dataset) for c in clients])
         for c in clients:
             w = len(c.dataset) / len_dataset
             for k, param in c.net.state_dict().items():
-                if k.endswith(".weight") or k.endswith(".bias"):
-                    merged_state_dict[k] += w * param
+                merged_state_dict[k] += w * param
 
         self.net.load_state_dict(merged_state_dict)
 
     def reset_weights(self):
         for layer in self.net.children():
-            if hasattr(layer, 'reset_parameters'):
-                layer.reset_parameters()
+            init_layer(layer)
