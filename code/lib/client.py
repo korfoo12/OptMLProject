@@ -12,4 +12,4 @@ class Client:
         dataloader = DeviceDataLoader(DataLoader(self.dataset, batch_size, shuffle=True), device)
         self.net.load_state_dict(state_dict)
         train_history = fit(self.net, dataloader, epochs, opt, lr, **kwargs)
-        print(f'{self.client_id}: Loss = {train_history[-1][0]:.4f}, Accuracy = {train_history[-1][1]:.4f}')
+        print(f'client {self.client_id} : Loss = {train_history[-1][0]:.4f}, Accuracy = {train_history[-1][1]:.4f}')

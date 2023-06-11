@@ -37,20 +37,24 @@ def partition_by_class(dataset: Dataset):
     key = lambda x: x[1]
     return {k:list(vs) for k,vs in groupby(sorted(dataset,key=key), key)}
 
-def split(partition, N: int, alpha: float = 1.):
-    splitter = Dirichlet(torch.ones(N)*alpha)
-    nodes = [list() for i in range(N)]
+def split(partition, proportions):
+    nodes = [list() for _ in proportions[0]]
     
     # iterate class and add a random nb of samples to each node
-    for _,vs in partition.items():
+    for (_,vs),p in zip(partition.items(),proportions):
         random.shuffle(vs)
         
-        len_per_client = splitter.sample() * len(vs)
+        len_per_client = p * len(vs)
         indices = torch.cat((torch.zeros(1),len_per_client.cumsum(0).round()),0).long()
         
         for i,(start,stop) in enumerate(zip(indices[:-1],indices[1:])):
             nodes[i] += vs[start:stop]
+
     return [ListDataset(node) for node in nodes]
+
+def generate_proportions(num_clients, num_classes, alpha=0.1):
+    splitter = Dirichlet(torch.ones(num_clients)*alpha)
+    return [splitter.sample() for _ in range(num_classes)]
 
 def get_device():
     return torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
