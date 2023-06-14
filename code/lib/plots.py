@@ -1,6 +1,12 @@
 import matplotlib.pyplot as plt
 
 def plot_loss_epoch(history):
+    """
+    plot evolution of training/validation loss and accuracy during training
+    
+    Args:
+        history: training/validation loss and accuracy at each epoch
+    """
     _,axes = plt.subplots(1,2,figsize=(12,6))
 
     axes[0].plot([i + 1 for i in range(len(history))], [history[i][0] for i in range(len(history))], color='r', label='training')

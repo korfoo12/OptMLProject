@@ -6,6 +6,9 @@ from itertools import groupby
 import random
 
 class ListDataset(Dataset):
+    """
+    Dataset wrapper around a list
+    """
     def __init__(self,l):
         self.l = l.copy()
         
@@ -22,6 +25,9 @@ class ListDataset(Dataset):
         return self.l.__repr__()
     
 class DeviceDataLoader(DataLoader):
+        """
+        Dataloader which loads samples on the device
+        """
         def __init__(self, dl, device):
             self.dl = dl
             self.device = device
@@ -34,10 +40,29 @@ class DeviceDataLoader(DataLoader):
             return len(self.dl)
 
 def partition_by_class(dataset: Dataset):
+    """
+    Partition a dataset by class
+    
+    Args:
+        dataset
+        
+    Returns:
+        partition : dict with entries (i,list of samples from the dataset with label i)
+    """
     key = lambda x: x[1]
     return {k:list(vs) for k,vs in groupby(sorted(dataset,key=key), key)}
 
 def split(partition, proportions):
+    """
+    split datasets into subdatasets to be used by clients based on sampled propotions
+    
+    Args:
+        partition : dataset formated as a dict with entries (i,list of samples from the dataset with label i)
+        proportions : sampled proportions which dictacte how many of data samples of each class to assign to each client dataset
+        
+    Returns:
+        subdatasets : list of datasets obtained from splitting
+    """
     nodes = [list() for _ in proportions[0]]
     
     # iterate class and add a random nb of samples to each node
@@ -53,13 +78,32 @@ def split(partition, proportions):
     return [ListDataset(node) for node in nodes]
 
 def generate_proportions(num_clients, num_classes, alpha=0.1):
+    """
+    For each class, generate the proportion of the dataset to allocate to each client
+    via Dirichlet(alpha) distribution
+    
+    Args:
+        num_clients : number of clients
+        num_classes : number of classes
+        alpha : parameter of the Dirichlet distribution, default=0.1
+        
+    Return:
+        proportions
+        
+    """
     splitter = Dirichlet(torch.ones(num_clients)*alpha)
     return [splitter.sample() for _ in range(num_classes)]
 
 def get_device():
+    """
+    get the device to use
+    """
     return torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
 def to_device(data, device):
+    """
+    send data to device
+    """
     if isinstance(data, (list, tuple)):
         return [to_device(x, device) for x in data]
     return data.to(device, non_blocking=True)

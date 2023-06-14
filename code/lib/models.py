@@ -1,6 +1,9 @@
 import torch.nn as nn
 
 def model():
+    """
+    custom classifier for CIFAR10 used for all our experiments
+    """
     return nn.Sequential(
         nn.Conv2d(3, 64, 3),
         nn.BatchNorm2d(64,track_running_stats=False),
