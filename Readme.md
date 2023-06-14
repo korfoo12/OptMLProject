@@ -29,12 +29,12 @@ Our repository has the following structure:
 .
 ├── code                                    # Directory with code implementation
 │   ├── lib                                 # Directory with helper .py files
-│       ├── client.py                       # Cient class implementation
-│       ├── data_helper.py                  # Dataset helper functions
-│       ├── models.py                       # Model used in training
-│       ├── plots.py                        # Plots for training metrics
-│       ├── server.py                       # Server class implementation
-│       └── train_helper.py                 # Helper functions for training
+│   │   ├── client.py                       # Cient class implementation
+│   │   ├── data_helper.py                  # Dataset helper functions
+│   │   ├── models.py                       # Model used in training
+│   │   ├── plots.py                        # Plots for training metrics
+│   │   ├── server.py                       # Server class implementation
+│   │   └── train_helper.py                 # Helper functions for training
 │   ├── CV_Adagrad_non_iid.ipynb            # Cross validation(CV) results for Adagrad learning rate (lr) on non-iid data
 │   ├── CV_Adam.ipynb                       # CV results for Adam optimizer lr and betas, both non-iid and iid
 │   ├── CV_SGD_ADAGRAD_iid.ipynb            # CV results for SGD and Adagrad lr on iid data
