@@ -22,7 +22,7 @@ The project was done using Python 3.8.9 with the following libraries:
 * numpy
 * sklearn
 
-### Repository organization
+### Repository structure
 
 ### Reproducing the results
 
