@@ -2,8 +2,8 @@
 
 ### Team members
 
-* Tran Huong Lan (lan.tranhuong@epfl.ch)
-* Larigauderie Léo Benjamin Paul Killian (leo.larigauderie@epfl.ch) 
+* Lan Tran Huong (lan.tranhuong@epfl.ch)
+* Léo Larigauderie Benjamin Paul Killian (leo.larigauderie@epfl.ch) 
 * Ivan Korovkin (ivan.korovkin@epfl.ch)
 
 ### Description
