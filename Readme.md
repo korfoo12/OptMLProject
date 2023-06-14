@@ -48,6 +48,9 @@ Our repository has the following structure:
 ```
 
 ### Reproducing the results
+To reproduce our results, please, clone our repository, and open the file /code/run.ipynb. There you may rerun all the cells to get the metrics and plots we used in a report. Be aware, that it may take few hours to fully run this notebook. 
+
+The hyperparameters are already provided in /code/run.ipynb file for each of the optimizers. If you wish to check why these values were chosen, please, rerun all the files starting with CV_. Besides, you may simply look at the outputs of the cells in these notebooks.
 
 
 Thank you for paying attention to our project!
